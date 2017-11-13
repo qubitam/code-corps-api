@@ -1,21 +1,20 @@
 defmodule CodeCorpsWeb.TaskView do
   @moduledoc false
   use CodeCorpsWeb, :view
-  use JaSerializer.PhoenixView
+  use JSONAPI.View, type: "task"
 
-  attributes [
-    :archived, :body, :created_at, :created_from, :inserted_at, :markdown,
-    :modified_at, :modified_from, :number, :order, :status, :title, :updated_at
-  ]
+  alias CodeCorpsWeb.{GithubIssueView, GithubPullRequestView, GithubRepoView, ProjectView,
+    TaskListView, UserView, UserTaskView, CommentView, TaskSkillView}
 
-  has_one :github_issue, type: "github-issue", field: :github_issue_id
-  has_one :github_pull_request, serializer: CodeCorpsWeb.GithubPullRequestView, identifiers: :always
-  has_one :github_repo, type: "github-repo", field: :github_repo_id
-  has_one :project, type: "project", field: :project_id
-  has_one :task_list, type: "task-list", field: :task_list_id
-  has_one :user, type: "user", field: :user_id
-  has_one :user_task, serializer: CodeCorpsWeb.UserTaskView, identifiers: :always
+  def fields do
+    [:archived, :body, :created_at, :created_from, :inserted_at, :markdown,
+    :modified_at, :modified_from, :number, :order, :status, :title, :updated_at]
+  end
 
-  has_many :comments, serializer: CodeCorpsWeb.CommentView, identifiers: :always
-  has_many :task_skills, serializer: CodeCorpsWeb.TaskSkillView, identifiers: :always
+  def relationships do
+    [github_issue: GithubIssueView, github_pull_request: GithubPullRequestView,
+      github_repo: GithubRepoView, project: ProjectView, task_list: TaskListView,
+      user: UserView, user_task: UserTaskView, comments: CommentView, task_skills: TaskSkillView]
+  end
+
 end

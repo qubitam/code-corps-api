@@ -15,7 +15,9 @@ defmodule CodeCorpsWeb.MessageController do
 
   @spec index(Conn.t, map) :: Conn.t
   def index(%Conn{} = conn, %{} = params) do
-    with messages <- Message |> Query.id_filter(params) |> Repo.all() do
+    with %User{} = current_user <- conn |> CodeCorps.Guardian.Plug.current_resource,
+         messages <- Messages.list(params),
+         {:ok, :authorized} <- current_user |> Policy.authorize(:index, %Message{}, messages, params) do
       conn |> render("index.json-api", data: messages)
     end
   end

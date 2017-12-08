@@ -22,7 +22,21 @@ defmodule CodeCorps.Policy do
     end
   end
 
+  @doc ~S"""
+  Determines if the specified user can perform the specified action on the
+  list of resources.
+  """
+  @spec authorize(User.t, atom, struct, list(struct), map) :: {:ok, :authorized} | {:error, :not_authorized}
+  def authorize(%User{} = user, action, struct, list, %{} = params) do
+    case user |> can?(action, struct, list, params) do
+      true -> {:ok, :authorized}
+      false -> {:error, :not_authorized}
+    end
+  end
+
   @spec can?(User.t, atom, struct, map) :: boolean
+
+  @spec can?(User.t, atom, struct, list(struct), map) :: boolean
 
   # Category
   defp can?(%User{} = current_user, :create, %Category{}, %{}), do: Policy.Category.create?(current_user)
@@ -49,6 +63,7 @@ defmodule CodeCorps.Policy do
   defp can?(%User{} = current_user, :update, %GithubRepo{} = github_repo, %{} = params), do: Policy.GithubRepo.update?(current_user, github_repo, params)
 
   # Message
+  defp can?(%User{} = current_user, :index, %Message{}, messages, %{} = params), do: Policy.Message.index?(current_user, messages, params)
   defp can?(%User{} = current_user, :show, %Message{} = message, %{}), do: Policy.Message.show?(current_user, message)
   defp can?(%User{} = current_user, :create, %Message{}, %{} = params), do: Policy.Message.create?(current_user, params)
 

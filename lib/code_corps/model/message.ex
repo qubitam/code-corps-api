@@ -4,6 +4,12 @@ defmodule CodeCorps.Message do
 
   The author does not need to be a member of the project in order to send a
   message to the project.
+
+  No recipient will be defined for the message. The recipient is defined at the
+  level of the `CodeCorps.Conversation`.
+
+  A message may be used as a broadcast to a number of users. A message MAY
+  therefore have many conversations associated with it.
   """
 
   use CodeCorps.Model

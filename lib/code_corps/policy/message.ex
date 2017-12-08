@@ -16,8 +16,8 @@ defmodule CodeCorps.Policy.Message do
   end
   def show?(_, _), do: false
 
-  def create?(%User{id: id}, %{"initiated_by" => "user", "author_id" => author_id}) do
-    id == author_id
+  def create?(%User{id: id}, %{"initiated_by" => "user", "author_id" => author_id}) when id === author_id do
+    true
   end
   def create?(%User{} = user, %{"initiated_by" => "admin", "project_id" => _} = params) do
     params |> get_project() |> administered_by?(user)

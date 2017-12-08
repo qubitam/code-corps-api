@@ -1,6 +1,9 @@
 defmodule CodeCorps.Message do
   @moduledoc """
   A message sent from a project to a user or from a user to a project.
+
+  The author does not need to be a member of the project in order to send a
+  message to the project.
   """
 
   use CodeCorps.Model
@@ -26,20 +29,20 @@ defmodule CodeCorps.Message do
     |> cast(attrs, [:body, :initiated_by, :subject])
     |> validate_required([:body, :initiated_by])
     |> validate_inclusion(:initiated_by, initiated_by_sources())
-    |> maybe_validate_subject()
+    |> require_subject_if_admin()
   end
 
   # validate subject only if initiated_by "admin"
-  @spec maybe_validate_subject(Ecto.Changeset.t) :: Ecto.Changeset.t
-  defp maybe_validate_subject(changeset) do
+  @spec require_subject_if_admin(Ecto.Changeset.t) :: Ecto.Changeset.t
+  defp require_subject_if_admin(changeset) do
     initiated_by = changeset |> Ecto.Changeset.get_field(:initiated_by)
-    changeset |> do_maybe_validate_subject(initiated_by)
+    changeset |> do_require_subject_if_admin(initiated_by)
   end
 
-  defp do_maybe_validate_subject(changeset, "admin") do
+  defp do_require_subject_if_admin(changeset, "admin") do
     changeset |> validate_required(:subject)
   end
-  defp do_maybe_validate_subject(changeset, _), do: changeset
+  defp do_require_subject_if_admin(changeset, _), do: changeset
 
   @spec initiated_by_sources :: Ecto.Changeset.t
   defp initiated_by_sources do

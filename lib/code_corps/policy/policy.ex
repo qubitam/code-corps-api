@@ -43,8 +43,6 @@ defmodule CodeCorps.Policy do
 
   @spec can?(User.t, atom, struct, map) :: boolean
 
-  @spec can?(User.t, atom, struct, list(struct), map) :: boolean
-
   # Category
   defp can?(%User{} = current_user, :create, %Category{}, %{}), do: Policy.Category.create?(current_user)
   defp can?(%User{} = current_user, :update, %Category{}, %{}), do: Policy.Category.update?(current_user)
@@ -63,6 +61,7 @@ defmodule CodeCorps.Policy do
 
   # GithubEvent
   defp can?(%User{} = current_user, :show, %GithubEvent{}, %{}), do: Policy.GithubEvent.show?(current_user)
+  defp can?(%User{} = current_user, :index, %GithubEvent{}, %{}), do: Policy.GithubEvent.index?(current_user)
   defp can?(%User{} = current_user, :update, %GithubEvent{}, %{}), do: Policy.GithubEvent.update?(current_user)
 
   # GithubRepo
@@ -177,6 +176,6 @@ defmodule CodeCorps.Policy do
 
   # :index policies have a different arity, so neeed to be grouped separately
 
-  defp can?(%User{} = current_user, :index, %GithubEvent{}, %{}), do: Policy.GithubEvent.index?(current_user)
+  @spec can?(User.t, atom, struct, list(struct), map) :: boolean
   defp can?(%User{} = current_user, :index, %Message{}, messages, %{} = params), do: Policy.Message.index?(current_user, messages, params)
 end

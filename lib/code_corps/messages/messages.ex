@@ -9,6 +9,7 @@ defmodule CodeCorps.Messages do
   @doc ~S"""
   Lists `CodeCorps.Message` filtered by parameters.
   """
+  @spec list(map) :: list(Message.t)
   def list(%{} = params) do
     Message
     |> Query.id_filter(params)

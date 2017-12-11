@@ -50,7 +50,7 @@ defmodule CodeCorps.Message do
   end
   defp do_require_subject_if_admin(changeset, _), do: changeset
 
-  @spec initiated_by_sources :: Ecto.Changeset.t
+  @spec initiated_by_sources :: list(String.t)
   defp initiated_by_sources do
     ~w{ admin user }
   end

@@ -15,8 +15,9 @@ defmodule CodeCorpsWeb.MessageControllerTest do
 
   describe "index" do
     @tag :authenticated
-    test "lists all entries", %{conn: conn, current_user: user} do
+    test "lists all entries user is authorized to view", %{conn: conn, current_user: user} do
       [message_1, message_2] = insert_pair(:message, initiated_by: "user", author: user)
+      _message_3 = insert(:message)
 
       conn
       |> request_index
@@ -24,11 +25,14 @@ defmodule CodeCorpsWeb.MessageControllerTest do
       |> assert_ids_from_response([message_1.id, message_2.id])
     end
 
-    @tag :authenticated
-    test "renders 403 when unauthorized", %{conn: conn} do
-      insert_pair(:message)
+    @tag authenticated: :admin
+    test "lists all entries if user is admin", %{conn: conn} do
+      [message_1, message_2] = insert_pair(:message)
 
-      assert conn |> request_index() |> json_response(403)
+      conn
+      |> request_index
+      |> json_response(200)
+      |> assert_ids_from_response([message_1.id, message_2.id])
     end
   end
 

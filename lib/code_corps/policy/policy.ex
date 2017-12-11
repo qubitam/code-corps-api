@@ -34,6 +34,13 @@ defmodule CodeCorps.Policy do
     end
   end
 
+  @doc ~S"""
+  Scopes a queryable so it's only able to return those records the specified
+  user is authorized to view.
+  """
+  @spec scope(module, User.t) :: Ecto.Queryable.t
+  def scope(Message, %User{} = current_user), do: Message |> Policy.Message.scope(current_user)
+
   @spec can?(User.t, atom, struct, map) :: boolean
 
   @spec can?(User.t, atom, struct, list(struct), map) :: boolean

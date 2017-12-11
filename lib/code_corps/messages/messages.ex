@@ -4,14 +4,14 @@ defmodule CodeCorps.Messages do
   """
 
   alias CodeCorps.{Helpers.Query, Message, Messages, Repo}
-  alias Ecto.{Changeset}
+  alias Ecto.{Changeset, Queryable}
 
   @doc ~S"""
-  Lists `CodeCorps.Message` filtered by parameters.
+  Lists pre-scoped `CodeCorps.Message` records filtered by parameters.
   """
-  @spec list(map) :: list(Message.t)
-  def list(%{} = params) do
-    Message
+  @spec list(Queryable.t, map) :: list(Message.t)
+  def list(scope, %{} = params) do
+    scope
     |> Query.id_filter(params)
     |> Messages.Query.author_filter(params)
     |> Messages.Query.project_filter(params)

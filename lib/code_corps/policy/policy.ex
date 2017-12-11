@@ -55,7 +55,6 @@ defmodule CodeCorps.Policy do
   defp can?(%User{} = current_user, :create, %GithubAppInstallation{}, %{} = params), do: Policy.GithubAppInstallation.create?(current_user, params)
 
   # GithubEvent
-  defp can?(%User{} = current_user, :index, %GithubEvent{}, %{}), do: Policy.GithubEvent.index?(current_user)
   defp can?(%User{} = current_user, :show, %GithubEvent{}, %{}), do: Policy.GithubEvent.show?(current_user)
   defp can?(%User{} = current_user, :update, %GithubEvent{}, %{}), do: Policy.GithubEvent.update?(current_user)
 
@@ -63,7 +62,6 @@ defmodule CodeCorps.Policy do
   defp can?(%User{} = current_user, :update, %GithubRepo{} = github_repo, %{} = params), do: Policy.GithubRepo.update?(current_user, github_repo, params)
 
   # Message
-  defp can?(%User{} = current_user, :index, %Message{}, messages, %{} = params), do: Policy.Message.index?(current_user, messages, params)
   defp can?(%User{} = current_user, :show, %Message{} = message, %{}), do: Policy.Message.show?(current_user, message)
   defp can?(%User{} = current_user, :create, %Message{}, %{} = params), do: Policy.Message.create?(current_user, params)
 
@@ -169,4 +167,9 @@ defmodule CodeCorps.Policy do
   defp can?(%User{} = current_user, :create, %UserTask{}, %{} = params), do: Policy.UserTask.create?(current_user, params)
   defp can?(%User{} = current_user, :update, %UserTask{} = user_task, %{}), do: Policy.UserTask.update?(current_user, user_task)
   defp can?(%User{} = current_user, :delete, %UserTask{} = user_task, %{}), do: Policy.UserTask.delete?(current_user, user_task)
+
+  # :index policies have a different arity, so neeed to be grouped separately
+
+  defp can?(%User{} = current_user, :index, %GithubEvent{}, %{}), do: Policy.GithubEvent.index?(current_user)
+  defp can?(%User{} = current_user, :index, %Message{}, messages, %{} = params), do: Policy.Message.index?(current_user, messages, params)
 end

@@ -3,7 +3,6 @@ defmodule CodeCorpsWeb.MessageController do
   use CodeCorpsWeb, :controller
 
   alias CodeCorps.{
-    Helpers.Query,
     Message,
     Messages,
     User

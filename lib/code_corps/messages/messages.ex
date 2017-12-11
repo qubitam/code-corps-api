@@ -1,29 +1,20 @@
 defmodule CodeCorps.Messages do
   @moduledoc ~S"""
+  Main context for work with the Messaging feature.
   """
 
-  import Ecto.Query, only: [where: 3]
-
-  alias CodeCorps.{Helpers.Query, Message, Repo}
+  alias CodeCorps.{Helpers.Query, Message, Messages, Repo}
   alias Ecto.{Changeset}
 
   @doc ~S"""
   Lists `CodeCorps.Message` filtered by parameters.
   """
-  def list(%{"author_id" => author_id}) do
-    Message
-    |> where([m], m.author_id == ^author_id)
-    |> Repo.all()
-  end
-
-  def list(%{"project_id" => project_id}) do
-    Message
-    |> where([m], m.project_id == ^project_id)
-    |> Repo.all()
-  end
-
   def list(%{} = params) do
-    Message |> Query.id_filter(params) |> Repo.all()
+    Message
+    |> Query.id_filter(params)
+    |> Messages.Query.author_filter(params)
+    |> Messages.Query.project_filter(params)
+    |> Repo.all()
   end
 
   @doc ~S"""

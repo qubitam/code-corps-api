@@ -23,18 +23,6 @@ defmodule CodeCorps.Policy do
   end
 
   @doc ~S"""
-  Determines if the specified user can perform the specified action on the
-  list of resources.
-  """
-  @spec authorize(User.t, atom, struct, list(struct), map) :: {:ok, :authorized} | {:error, :not_authorized}
-  def authorize(%User{} = user, action, struct, list, %{} = params) do
-    case user |> can?(action, struct, list, params) do
-      true -> {:ok, :authorized}
-      false -> {:error, :not_authorized}
-    end
-  end
-
-  @doc ~S"""
   Scopes a queryable so it's only able to return those records the specified
   user is authorized to view.
   """
@@ -173,9 +161,4 @@ defmodule CodeCorps.Policy do
   defp can?(%User{} = current_user, :create, %UserTask{}, %{} = params), do: Policy.UserTask.create?(current_user, params)
   defp can?(%User{} = current_user, :update, %UserTask{} = user_task, %{}), do: Policy.UserTask.update?(current_user, user_task)
   defp can?(%User{} = current_user, :delete, %UserTask{} = user_task, %{}), do: Policy.UserTask.delete?(current_user, user_task)
-
-  # :index policies have a different arity, so neeed to be grouped separately
-
-  @spec can?(User.t, atom, struct, list(struct), map) :: boolean
-  defp can?(%User{} = current_user, :index, %Message{}, messages, %{} = params), do: Policy.Message.index?(current_user, messages, params)
 end

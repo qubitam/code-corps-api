@@ -11,14 +11,12 @@ defmodule CodeCorps.Policy.Message do
   @spec scope(Ecto.Queryable.t, User.t) :: Ecto.Queryable.t
   def scope(queryable, %User{admin: true}), do: queryable
   def scope(queryable, %User{id: id}) do
-    projects_administered_by_user_query =
-      from p in Project,
-        join: pu in ProjectUser, on: pu.project_id == p.id,
-        where: pu.user_id == ^id,
-        where: pu.role in ~w(admin owner)
-
     projects_administered_by_user_ids =
-      from(p in projects_administered_by_user_query, select: p.id)
+      Project
+      |> join(:inner, [p], pu in ProjectUser, pu.project_id == p.id)
+      |> where([_p, pu], pu.user_id == ^id)
+      |> where([_p, pu], pu.role in ~w(admin owner))
+      |> select([p], p.id)
       |> Repo.all
 
     queryable
